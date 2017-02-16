@@ -1,38 +1,40 @@
-<!-- this is the FE challenge html file -->
 <!doctype html>
 <html lang="en" ng-app="app">
 <head>
   <meta charset="utf-8">
-  <title>Front End Test</title>
+  <title>Front End Challenge</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.js" type="text/javascript"></script>
   <script src="app.js"></script>
 </head>
 <body ng-controller="controller">
-	<div class="cardContainer">
-		<div ng-repeat="user in users" class="card" ng-click="openPosts(user)">
+	<div class="cardContainer" ng-show="!receivedError">
+		<div ng-repeat="user in users" class="card" ng-click="openPostsFromUser(user)">
 			<div class="avatar">
-				<img src="{{user.imageUrl}}" />
+				<img ng-src="{{user.imageUrl}}" />
 			</div>
 			<div class="cardInfo">
-				<p class="catchPhrase">{{user.company.catchPhrase}}</p>
+				<p class="catchPhrase">{{'"' + user.company.catchPhrase + '"'}}</p>
 				<p class="userName">{{user.name}}</p>
 				<p class="email">{{user.email}}</p>
 			</div>
 		</div>
 	</div>
-	<div class="postsContainer">
-		<div ng-show="showPosts" class="posts">
+	<div class="postsContainer" ng-show="!receivedError">
+		<div ng-show="postsDisplayed" class="posts">
 			<div ng-repeat="post in posts" class="post">
-				<b>{{post.title}}</b>
-				<p>{{post.body}}</p>
+				<b class="postTitle">{{post.title}}</b>
+				<p class="postBody">{{post.body}}</p>
 			</div>
 		</div>
 	</div>
-	<div class="clickACard">
+	<div class="clickACard" ng-show="!receivedError">
 		<div class="clickACardText">
   		<p>Click a card to view five of their posts.</p>
   	</div>
+  </div>
+  <div ng-show="receivedError">
+  	WHOOPS! We got 404'd. Please try again later!
   </div>
 </body>
 </html>

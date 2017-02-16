@@ -1,51 +1,61 @@
-// this is the FE challenge js file
 var app = angular.module('app',[])
 
 app.controller('controller',['$scope', '$http', function ($scope, $http) {
 
-	console.log("Controller is loaded!")
+	// declaration of scope variables
 
 	$scope.users = []
 	$scope.posts = []
-	$scope.showPosts = false
+	$scope.postsDisplayed = false // controls the view of the user posts element
+	$scope.receivedError = false // controls the view of the error element
 
-	function pickNAtRandom (array, n) {
-		var randomNArray = []
-		for (var i = 0; i < n; i++) {
-			var randomNumber = Math.round(Math.random()*(array.length - 1))
-			console.log(randomNumber)
-			randomNArray.push(array[randomNumber])
-			array.splice(randomNumber, 1)
+	// controller functions
+
+	function pickNArrayElementsAtRandom (array, n) {
+		// main function used in the app  has time complexity ~ O(n^2) because of the splice 
+		// method inside the for loop (~O(n) and for loop is ~O(n)). Improvements become more 
+		// valuable as larger arrays/number of items increase. One possibility for improvement
+		// would be using the Fisher-Yates Shuffle (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
+		// (~ O(n)) on the array and then simply selecting the first n elements of the shuffled array.
+		// Perhaps we can discuss this further in in-person! ;)
+		var randomElements = []
+		for (var i = 0; i < n && array.length; i++) { // generates n random indeces, puts corresponding input array element into the selected elements array, then removes said element from the input array
+			var randomIndex = Math.round(Math.random()*(array.length - 1))
+			randomElements.push(array[randomIndex])
+			array.splice(randomIndex, 1)
 		}
-		return randomNArray
-	}
+		return randomElements
+	} 
 
-	function getFivePosts (user) {
-		$http.get('https://jsonplaceholder.typicode.com/posts?userId=' + user.id).then(function (response, error) {
-			if (response.status === 404) {
+	function openFivePostsFromUser (user) {
+		$http.get('https://jsonplaceholder.typicode.com/posts?userId=' + user.id).then(function (response, error) { // retrieves posts from given user
+			if (response.status === 404) { // error handling
+				$scope.receivedError = true
 				return error
 			}
-			$scope.posts = pickNAtRandom(response.data, 5)
-			$scope.posts.unshift({ title: user.name + "'s Posts", body: "" })
-			console.log($scope.posts)
-			$scope.showPosts = !$scope.showPosts
+			$scope.posts = pickNArrayElementsAtRandom(response.data, 5) // picks 5 random posts from user
+			$scope.posts.unshift({ title: user.name + "'s Posts", body: "" }) // places user's name at the beginning
+			$scope.postsDisplayed = !$scope.postsDisplayed // toggles user posts view
 		})
 	}
 
-	$scope.openPosts = function (userId) {
-		console.log(userId)
-		getFivePosts(userId)
+	// scope functions
+
+	$scope.openPostsFromUser = function (userId) {
+		openFivePostsFromUser(userId)
 	}
 
-	$http.get('https://jsonplaceholder.typicode.com/users').then(function (response, error) {
-		if (response.status === 404) {
+	// retrieval of user info on pageload
+
+	$http.get('https://jsonplaceholder.typicode.com/users').then(function (response, error) { // retrieves users
+		if (response.status === 404) { // error handling
+			$scope.receivedError = true
 			return error
 		}
-		response.data = response.data.map(function (item) {
-			item.imageUrl = "https://api.adorable.io/avatars/150/" + item.email + ".png"
-			return item
-		})
-		$scope.users = pickNAtRandom(response.data, 3)
+		$scope.users = pickNArrayElementsAtRandom(response.data.map(function (user) {
+			user.imageUrl = "https://api.adorable.io/avatars/150/" + user.email + ".png"
+			return user
+		}), 3) // selects 3 random users and gives each their avatar image url as an attribute
 	})
 
 }])
