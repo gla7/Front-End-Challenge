@@ -27,22 +27,18 @@ app.controller('controller',['$scope', '$http', function ($scope, $http) {
 		return randomElements
 	} 
 
-	function openFivePostsFromUser (user) {
+	// scope functions
+
+	$scope.openPostsFromUser = function (user, numberOfPosts) {
 		$http.get('https://jsonplaceholder.typicode.com/posts?userId=' + user.id).then(function (response, error) { // retrieves posts from given user
 			if (response.status === 404) { // error handling
 				$scope.receivedError = true
 				return error
 			}
-			$scope.posts = pickNArrayElementsAtRandom(response.data, 5) // picks 5 random posts from user
+			$scope.posts = pickNArrayElementsAtRandom(response.data, numberOfPosts) // picks 5 random posts from user
 			$scope.posts.unshift({ title: user.name + "'s Posts", body: "" }) // places user's name at the beginning
 			$scope.postsDisplayed = !$scope.postsDisplayed // toggles user posts view
 		})
-	}
-
-	// scope functions
-
-	$scope.openPostsFromUser = function (userId) {
-		openFivePostsFromUser(userId)
 	}
 
 	// retrieval of user info on pageload
@@ -53,7 +49,7 @@ app.controller('controller',['$scope', '$http', function ($scope, $http) {
 			return error
 		}
 		$scope.users = pickNArrayElementsAtRandom(response.data.map(function (user) {
-			user.imageUrl = "https://api.adorable.io/avatars/150/" + user.email + ".png"
+			user.avatarUrl = "https://api.adorable.io/avatars/150/" + user.email + ".png"
 			return user
 		}), 3) // selects 3 random users and gives each their avatar image url as an attribute
 	})

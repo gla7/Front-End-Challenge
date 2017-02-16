@@ -9,9 +9,9 @@
 </head>
 <body ng-controller="controller">
 	<div class="cardContainer" ng-show="!receivedError">
-		<div ng-repeat="user in users" class="card" ng-click="openPostsFromUser(user)">
+		<div ng-repeat="user in users" class="card" ng-click="openPostsFromUser(user, 5)">
 			<div class="avatar">
-				<img ng-src="{{user.imageUrl}}" />
+				<img ng-src="{{user.avatarUrl}}" />
 			</div>
 			<div class="cardInfo">
 				<p class="catchPhrase">{{'"' + user.company.catchPhrase + '"'}}</p>
