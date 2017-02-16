@@ -17,7 +17,7 @@ app.controller('controller',['$scope', '$http', function ($scope, $http) {
 		// valuable as larger arrays/number of items increase. One possibility for improvement
 		// would be using the Fisher-Yates Shuffle (https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
 		// (~ O(n)) on the array and then simply selecting the first n elements of the shuffled array.
-		// Perhaps we can discuss this further in in-person! ;)
+		// Perhaps we can discuss this further in person! ;)
 		var randomElements = []
 		for (var i = 0; i < n && array.length; i++) { // generates n random indeces, puts corresponding input array element into the selected elements array, then removes said element from the input array
 			var randomIndex = Math.round(Math.random()*(array.length - 1))
